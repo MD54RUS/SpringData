@@ -15,7 +15,7 @@ public interface BookRepository extends CrudRepository<Book, Long>
         BookComplexQueryRepository
 {
 
-    List<Book> findBooksByYear(int year);
+  List<Book> findBooksByYear(int year);
 
     @Query("select aob.book from "
             + "AuthorOfBook aob join aob.book "

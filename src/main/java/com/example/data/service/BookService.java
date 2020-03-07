@@ -13,7 +13,7 @@ public interface BookService {
 
     Optional<Book> findById(Long id);
 
-    Page<Book> findAtPage(int pageIndex, int rowCount, Sort.Direction direction, String fiel);
+    Page<Book> findAtPage(int pageIndex, int rowCount, Sort.Direction direction, String field);
 
     List<Book> findSame(Book book);
 

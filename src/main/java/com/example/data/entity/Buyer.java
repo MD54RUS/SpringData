@@ -6,15 +6,15 @@ import javax.persistence.*;
 
 @Entity
 @Data
-public class Author {
+public class Buyer {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
-  @Column(name = "first_name")
-  private String firstname;
+  @Column(name = "name")
+  private String name;
 
-  @Column(name = "last_name")
-  private String lastname;
+  @Column(name = "address")
+  private String address;
 }

@@ -4,6 +4,7 @@ import com.example.data.DataApplication;
 import com.example.data.data.AuthorOfBookRepository;
 import com.example.data.data.AuthorRepository;
 import com.example.data.data.BookRepository;
+import com.example.data.data.BooksSpecification;
 import com.example.data.entity.Author;
 import com.example.data.entity.AuthorOfBook;
 import com.example.data.entity.Book;
@@ -12,7 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.event.annotation.BeforeTestExecution;
+import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.Assert;
 
@@ -37,8 +39,8 @@ class BookServiceImplTest {
     authorRepository.save(mark);
 
     Author jules = new Author();
-    mark.setFirstname("Jules");
-    mark.setLastname("Verne");
+    jules.setFirstname("Jules");
+    jules.setLastname("Verne");
     authorRepository.save(jules);
 
     Book book = new Book();
@@ -53,7 +55,7 @@ class BookServiceImplTest {
     authorOfBookRepository.save(aob1);
 
     Book book2 = new Book();
-    book2.setTitle("Михаил СТрогов");
+    book2.setTitle("Михаил Строгов");
     book2.setYear(1876);
     bookRepository.save(book2);
 
@@ -69,6 +71,7 @@ class BookServiceImplTest {
   }
 
   @Test
+  @DirtiesContext
   public void testCreation() {
     boolean founded = false;
     for (Book book : bookRepository.findAll()) {
@@ -77,5 +80,51 @@ class BookServiceImplTest {
       }
     }
     Assert.isTrue(founded);
+  }
+
+  @Test
+  @DirtiesContext
+  public void testFindByYear() {
+    Assert.isTrue(bookRepository.findBooksByYear(1876).size() == 2);
+    Assert.isTrue(bookRepository.findBooksByYear(1878).size() == 0);
+  }
+
+  @Test
+  @DirtiesContext
+  public void testPaging() {
+    boolean founded =
+        bookService
+            .findAtPage(1, 1, Sort.Direction.ASC, "title")
+            .get()
+            .anyMatch(book -> book.getTitle().equals("Приключения Тома Сойера"));
+    Assert.isTrue(founded);
+  }
+
+  @Test
+  @DirtiesContext
+  public void findSame() {
+    Book book = new Book();
+    book.setYear(1876);
+    Assert.isTrue(bookService.findSame(book).size() == 2);
+  }
+
+  @Test
+  @DirtiesContext
+  public void findInRange() {
+    Assert.isTrue(bookRepository.findAll(BooksSpecification.yearInRange(1874, 1876)).size() == 0);
+    Assert.isTrue(bookRepository.findAll(BooksSpecification.yearInRange(1874, 1877)).size() == 2);
+  }
+
+  @Test
+  @DirtiesContext
+  public void findByAuthorLastname() {
+    Assert.isTrue(bookRepository.findByAuthorLastname("Twain").size() == 2);
+    Assert.isTrue(bookRepository.findByAuthorLastname("Verne").size() == 1);
+  }
+
+  @Test
+  @DirtiesContext
+  public void testComplexQuery() {
+    System.out.println(bookRepository.complexQueryMethod());
   }
 }
