@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface SoldBookRepository extends CrudRepository<SoldBook, Long> {
 
+  List<SoldBook> findAll();
+
   List<SoldBook> findBookByBook(Book book);
 
   List<SoldBook> findBookByBuyer(Buyer buyer);

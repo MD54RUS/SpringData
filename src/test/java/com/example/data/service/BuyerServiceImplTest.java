@@ -95,12 +95,12 @@ public class BuyerServiceImplTest {
 
   @Test
   public void testSellOperation() {
-    long startCount = soldBookRepository.count();
+    int startCount = soldBookRepository.findAll().size();
     Book book = bookRepository.findBooksByYear(1876).get(0);
     Buyer buyer = buyerRepository.findBuyersByName("A").get(0);
     buyerService.sell(book, buyer, 65);
     startCount++;
-    boolean sold = soldBookRepository.count() == startCount;
+    boolean sold = soldBookRepository.findAll().size() == startCount;
     Assert.isTrue(sold);
   }
 
@@ -120,15 +120,5 @@ public class BuyerServiceImplTest {
     int sum = buyerService.costSoldByBuyer(buyer);
     int res = soldBookRepository.findBookByBuyer(buyer).stream().mapToInt(SoldBook::getCost).sum();
     Assert.isTrue(sum == testRes && res == testRes);
-  }
-
-  @Test
-  public void testBuyerService() {
-    buyerRepository.findAll().forEach(System.out::println);
-    soldBookRepository.findAll().forEach(System.out::println);
-    Book book = bookRepository.findBooksByYear(1876).get(0);
-    System.out.println(book.getTitle());
-    System.out.println(buyerService.costSoldByBook(book));
-    System.out.println(buyerService.costSoldByBuyer(buyerRepository.findBuyersByName("A").get(0)));
   }
 }
